@@ -158,12 +158,20 @@ class DisposableElement extends h {
 
   connectedCallback() {
     super.connectedCallback();
-    this.#refresh();
+
+    // If we had an inner, we're being moved somewhere, so don't refresh it.
+    if (this.#inner === null) {
+      this.#refresh();
+    }
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.#refresh();
+
+    // Only delete if we're not being attached somewhere else.
+    if (this.parentNode === null) {
+      this.#refresh();
+    }
   }
 
   /**
