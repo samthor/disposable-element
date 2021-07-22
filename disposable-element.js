@@ -137,7 +137,7 @@ class DisposableElement extends LitElement {
   connectedCallback() {
     super.connectedCallback();
 
-    // If we had an inner, we're being moved somewhere, so don't refresh it.
+    // If we had an inner, we're being moved somewhere, so don't refresh.
     if (this.#inner === null) {
       this.#refresh();
     }
@@ -147,7 +147,7 @@ class DisposableElement extends LitElement {
     super.disconnectedCallback();
 
     // Only delete if we're not being attached somewhere else.
-    if (this.parentNode === null) {
+    if (!this.isConnected) {
       this.#refresh();
     }
   }
