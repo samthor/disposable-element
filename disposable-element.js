@@ -173,7 +173,7 @@ class DisposableElement extends LitElement {
  * @template T
  * @param {typeof DisposableInner} ctor
  * @param {(T & {[name: string]: any})=} defaultProps
- * @return {typeof DisposableElement & T}
+ * @return {({ new(): HTMLElement & T })}
  */
 export function disposableElement(ctor, defaultProps) {
 
@@ -193,13 +193,15 @@ export function disposableElement(ctor, defaultProps) {
   // @ts-ignore
   const styles = ctor.styles;
 
-  return class extends DisposableElement {
+  // We promise that this constructor will have the properties of "defaultProps" when it's done.
+  const out = /** @type {unknown} */ (class extends DisposableElement {
     static properties = properties;
     static styles = styles;
 
     constructor() {
-      super(ctor, defaultProps);
+      super(ctor, defaultProps ?? {});
     }
-  };
+  });
+  return /** @type {({ new(): HTMLElement & T })} */ (out);
 }
 

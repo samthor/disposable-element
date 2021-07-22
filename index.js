@@ -1,12 +1,15 @@
-import { TestDisposableElement } from './elements/test-disposable.js';
+//import { TestDisposableElement } from './elements/test-disposable.js';
+import { ChatElement } from './elements/chat-view.js';
 
 
-const changeBarElement = /** @type {HTMLButtonElement} */ (document.getElementById('changeBar'));
+// TODO: this works for instantiation, but casting from "HTMLElement?" is borked
+const chatView = new ChatElement();
+document.body.append(chatView);
 
-// TODO: this type is basically wrong
-const changeDisposableElement = /** @type {TestDisposableElement} */ (document.getElementById('changeDisposable'));
+const updateChatButton = /** @type {HTMLButtonElement} */ (document.getElementById('chatButton'));
 
-
-changeBarElement.addEventListener('click', (event) => {
-  changeDisposableElement.bar = 'value-' + Math.random();
+updateChatButton.addEventListener('click', (event) => {
+  const number = Math.floor((36 ** 6) * Math.random())
+  const chat = number.toString(36);
+  chatView.chat = chat;
 });
