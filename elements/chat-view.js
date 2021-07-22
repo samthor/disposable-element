@@ -35,7 +35,7 @@ class ChatInner extends DisposableInner {
       cleanup(unsub);
     }
 
-    // FIXME: we need to clear state (stored between instances)
+    // FIXME: need to clear state (stored between instances)
     this._data = '';
   }
 
