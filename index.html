@@ -7,11 +7,11 @@
 </head>
 <body>
 
-<script src="index.js" type="module"></script>
+<script type="module">
+  import(window.location.hostname === 'localhost' ? './index.js' : './index.bundle.js');
+</script>
 
 <h1>Chat App</h1>
-
-<chat-view id="chatView"></chat-view>
 
 <button id="chatButton">Set new chat</button>
 

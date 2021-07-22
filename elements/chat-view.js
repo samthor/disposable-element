@@ -8,10 +8,19 @@ import { html } from "lit";
  * @param {(arg: string) => void} callback
  */
 const onPretendSnapshot = (id, callback) => {
-  const interval = window.setInterval(() => {
-    callback(`Some data for ${id}: ${Math.random()}`);
-  }, 2500);
-  return () => window.clearInterval(interval);
+
+  let interval = 0;
+  let timeout = window.setTimeout(() => {
+    callback(`Some initial data for ${id}: ${Math.random()}`);
+    interval = window.setInterval(() => {
+      callback(`Some updated data for ${id}: ${Math.random()}`);
+    }, 2500);
+  }, 500);
+
+  return () => {
+    window.clearTimeout(timeout);
+    window.clearInterval(interval);
+  };
 };
 
 
