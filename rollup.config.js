@@ -4,7 +4,7 @@ import resolve from 'rollup-plugin-node-resolve';
 export default {
   input: 'index.js',
   output: {
-    file: 'index.bundle.js',
+    file: 'docs/index.bundle.js',
     format: 'esm',
   },
   plugins: [
