@@ -63,17 +63,13 @@ span {
    * @param {lit.PropertyValues} changedProperties
    */
   shouldDispose(changedProperties) {
-
-    if (changedProperties.has('bar')) {
-      console.debug('got shouldDispose', changedProperties.get('bar'), this.bar);
-    }
     return changedProperties.has('bar');
   }
 
   render() {
     return html`
 <h1>Disposable <span>Element</span></h1>
-<p>foo=${this.foo} blah=${this._blah} renders=${renders} <button @click=${this.#clickRender}>Update</button></p>
+<p>foo=${this.foo} blah(state)=${this._blah} bar(dispose)=${this.bar} globalButtonClicks=${renders} <button @click=${this.#clickRender}>Update</button></p>
     `;
   }
 
@@ -94,8 +90,10 @@ span {
 }
 
 
-const TestDisposableElement = disposableElement(TestDisposableInner, {
+// We combine the default values with the element to generate a valid type.
+export const TestDisposableElement = disposableElement(TestDisposableInner, {
   foo: 'defaultValueFromArg',
   bar: 'whoKnows'
 });
 customElements.define('test-disposable', TestDisposableElement);
+

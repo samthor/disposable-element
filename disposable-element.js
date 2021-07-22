@@ -170,10 +170,12 @@ class DisposableElement extends LitElement {
 
 
 /**
+ * @template T
  * @param {typeof DisposableInner} ctor
- * @param {{[name: string]: any}} defaultProps
+ * @param {(T & {[name: string]: any})=} defaultProps
+ * @return {typeof DisposableElement & T}
  */
-export function disposableElement(ctor, defaultProps = {}) {
+export function disposableElement(ctor, defaultProps) {
 
   /** @type {{[key: string]: lit.PropertyDeclaration}} */
   // @ts-ignore
