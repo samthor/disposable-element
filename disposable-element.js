@@ -2,13 +2,20 @@ import { LitElement } from "lit";
 import * as lit from 'lit';
 
 
-/** @type {lit.ReactiveElement?} */
+/** @type {DisposableElement?} */
 let globalCtorHost = null;
+
+
+/**
+ * Used to hide the immediate refresh symbol on {@link DisposableElement} so it can only be called
+ * via the inner's `dispose` method.
+ */
+const refreshSymbol = Symbol('refresh');
 
 
 export class DisposableInner {
 
-  /** @type {lit.ReactiveElement} */
+  /** @type {DisposableElement} */
   #host;
 
   /**
@@ -82,6 +89,13 @@ export class DisposableInner {
   }
 
   /**
+   * Immediately dispose of this inner. It should not be used after this call.
+   */
+  dispose() {
+    this.#host[refreshSymbol]();
+  }
+
+  /**
    * @return {unknown}
    */
   render() {
@@ -107,7 +121,10 @@ class DisposableElement extends LitElement {
     Object.assign(this, defaultProps);
   }
 
-  #refresh = () => {
+  /**
+   * Immediately dispose of this element's inner, and force it to be recreated.
+   */
+  [refreshSymbol]() {
     if (this.#inner !== null) {
       this.#cleanup();
       this.#cleanup = () => { };
@@ -132,14 +149,14 @@ class DisposableElement extends LitElement {
     }
 
     this.#cleanup = () => cleanupTasks.forEach((fn) => fn());
-  };
+  }
 
   connectedCallback() {
     super.connectedCallback();
 
     // If we had an inner, we're being moved somewhere, so don't refresh.
     if (this.#inner === null) {
-      this.#refresh();
+      this[refreshSymbol]();
     }
   }
 
@@ -148,7 +165,7 @@ class DisposableElement extends LitElement {
 
     // Only delete if we're not being attached somewhere else.
     if (!this.isConnected) {
-      this.#refresh();
+      this[refreshSymbol]();
     }
   }
 
@@ -162,7 +179,7 @@ class DisposableElement extends LitElement {
 
     // Only refresh if we've updated at least once.
     if (this.hasUpdated && this.#inner.shouldDispose(changedProperties)) {
-      this.#refresh();
+      this[refreshSymbol]();
       return true;
     }
 
