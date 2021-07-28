@@ -1,4 +1,4 @@
-If you happen to be here, [see the draft unreleased post](https://whistlr.info/2021/disposable-web-components/).
+If you happen to be here, [see the post](https://whistlr.info/2021/disposable-web-components/).
 
 # TODOs
 

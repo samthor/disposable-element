@@ -1,5 +1,6 @@
-import { LitElement } from "lit";
+import { LitElement } from 'lit';
 import * as lit from 'lit';
+import * as types from './types.js';
 
 
 /** @type {DisposableElement?} */
@@ -13,6 +14,9 @@ let globalCtorHost = null;
 const refreshSymbol = Symbol('refresh');
 
 
+/**
+ * @implements {types.DisposableInnerInterface}
+ */
 export class DisposableInner {
 
   /** @type {DisposableElement} */
@@ -88,9 +92,6 @@ export class DisposableInner {
     return false;
   }
 
-  /**
-   * Immediately dispose of this inner. It should not be used after this call.
-   */
   dispose() {
     this.#host[refreshSymbol]();
   }
@@ -104,15 +105,15 @@ export class DisposableInner {
 }
 
 
-class DisposableElement extends LitElement {
+export class DisposableElement extends LitElement {
   #cleanup = () => { };
   #ctor;
 
-  /** @type {DisposableInner?} */
+  /** @type {types.DisposableInnerInterface?} */
   #inner = null;
 
   /**
-   * @param {typeof DisposableInner} ctor
+   * @param {{new(cleanup: types.CleanupType): types.DisposableInnerInterface}} ctor
    * @param {{[name: string]: any}} defaultProps
    */
   constructor(ctor, defaultProps) {
@@ -138,7 +139,7 @@ class DisposableElement extends LitElement {
     /** @type {(() => void)[]} */
     const cleanupTasks = [];
 
-    /** @type {(fn: () => void) => void} */
+    /** @type {types.CleanupType} */
     const cleanup = (fn) => void cleanupTasks.push(fn);
 
     try {
@@ -185,7 +186,6 @@ class DisposableElement extends LitElement {
 
     return this.#inner.shouldUpdate(changedProperties);
   }
-
 
   render() {
     const i = /** @type {DisposableInner} */ (this.#inner);

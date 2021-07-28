@@ -1,6 +1,6 @@
 import { html, css } from 'lit';
 import * as lit from 'lit';
-import { disposableElement, DisposableInner } from '../disposable-element';
+import { disposableElement, DisposableInner } from '../../disposable-element';
 
 
 let renders = 0;

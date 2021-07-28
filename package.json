@@ -1,9 +1,27 @@
 {
-  "dependencies": {
+  "peerDependencies": {
     "lit": "^2.0.0-rc.2"
   },
   "devDependencies": {
     "rollup": "^2.53.3",
     "rollup-plugin-node-resolve": "^5.2.0"
-  }
+  },
+  "name": "disposable-element",
+  "description": "Disposable Web Components",
+  "version": "1.0.0",
+  "main": "disposable-element.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samthor/disposable-element.git"
+  },
+  "author": "Sam Thorogood <sam.thorogood@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/samthor/disposable-element/issues"
+  },
+  "homepage": "https://github.com/samthor/disposable-element#readme"
 }

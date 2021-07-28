@@ -1,4 +1,4 @@
-import { disposableElement, DisposableInner } from "../disposable-element";
+import { DisposableElement, disposableElement, DisposableInner } from "../../disposable-element";
 import * as lit from 'lit';
 import { html } from "lit";
 
@@ -79,3 +79,11 @@ class ChatInner extends DisposableInner {
  */
 export const ChatElement = disposableElement(ChatInner, { chat: '' });
 customElements.define('chat-view', ChatElement);
+
+
+export class ChatElement2 extends DisposableElement {
+  constructor() {
+    super(ChatInner, { chat: '' });
+  }
+}
+customElements.define('chat-view2', ChatElement2);
