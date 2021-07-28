@@ -2,9 +2,12 @@
 import { ChatElement } from './elements/chat-view.js';
 
 
-// TODO: this works for instantiation, but casting from "HTMLElement?" is borked
 const chatView = new ChatElement();
 document.body.append(chatView);
+
+
+const q = document.getElementById('view');
+const cv = /** @type {ChatElement} */ (q);
 
 const updateChatButton = /** @type {HTMLButtonElement} */ (document.getElementById('chatButton'));
 

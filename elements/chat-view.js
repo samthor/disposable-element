@@ -26,7 +26,10 @@ const onPretendSnapshot = (id, callback) => {
 
 
 class ChatInner extends DisposableInner {
-  static properties = { chat: { type: String }, _data: { type: String, state: true } };
+  static properties = {
+    chat: { type: String },
+    _data: { type: String, state: true },
+  };
 
   /**
    * @param {(arg: () => void) => void} cleanup
@@ -71,5 +74,8 @@ class ChatInner extends DisposableInner {
   }
 }
 
+/**
+ * @typedef {InstanceType<typeof ChatElement>}
+ */
 export const ChatElement = disposableElement(ChatInner, { chat: '' });
 customElements.define('chat-view', ChatElement);

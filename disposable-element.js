@@ -198,7 +198,7 @@ class DisposableElement extends LitElement {
  * @template T
  * @param {typeof DisposableInner} ctor
  * @param {(T & {[name: string]: any})=} defaultProps
- * @return {({ new(): HTMLElement & T })}
+ * @return {{ new(): HTMLElement & T }}
  */
 export function disposableElement(ctor, defaultProps) {
 
@@ -227,6 +227,7 @@ export function disposableElement(ctor, defaultProps) {
       super(ctor, defaultProps ?? {});
     }
   });
+
   return /** @type {({ new(): HTMLElement & T })} */ (out);
 }
 
