@@ -24,13 +24,23 @@ var t,i$1,s$1,e;const o$1=globalThis.trustedTypes,l$1=o$1?o$1.createPolicy("lit-
  * SPDX-License-Identifier: BSD-3-Clause
  */var i,l,o,s,n,a;(null!==(i=(a=globalThis).litElementVersions)&&void 0!==i?i:a.litElementVersions=[]).push("3.0.0-rc.2");class h extends a$2{constructor(){super(...arguments),this.renderOptions={host:this},this.Φt=void 0;}createRenderRoot(){var t,e;const r=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=r.firstChild),r}update(t){const r=this.render();super.update(t),this.Φt=V(r,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this.Φt)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this.Φt)||void 0===t||t.setConnected(!1);}render(){return w}}h.finalized=!0,h._$litElement$=!0,null===(o=(l=globalThis).litElementHydrateSupport)||void 0===o||o.call(l,{LitElement:h}),null===(n=(s=globalThis).litElementPlatformSupport)||void 0===n||n.call(s,{LitElement:h});
 
-/** @type {lit.ReactiveElement?} */
+/** @type {DisposableElement?} */
 let globalCtorHost = null;
 
 
+/**
+ * Used to hide the immediate refresh symbol on {@link DisposableElement} so it can only be called
+ * via the inner's `dispose` method.
+ */
+const refreshSymbol = Symbol('refresh');
+
+
+/**
+ * @implements {types.DisposableInnerInterface}
+ */
 class DisposableInner {
 
-  /** @type {lit.ReactiveElement} */
+  /** @type {DisposableElement} */
   #host;
 
   /**
@@ -103,6 +113,10 @@ class DisposableInner {
     return false;
   }
 
+  dispose() {
+    this.#host[refreshSymbol]();
+  }
+
   /**
    * @return {unknown}
    */
@@ -116,11 +130,11 @@ class DisposableElement extends h {
   #cleanup = () => { };
   #ctor;
 
-  /** @type {DisposableInner?} */
+  /** @type {types.DisposableInnerInterface?} */
   #inner = null;
 
   /**
-   * @param {typeof DisposableInner} ctor
+   * @param {{new(cleanup: types.CleanupType): types.DisposableInnerInterface}} ctor
    * @param {{[name: string]: any}} defaultProps
    */
   constructor(ctor, defaultProps) {
@@ -129,7 +143,10 @@ class DisposableElement extends h {
     Object.assign(this, defaultProps);
   }
 
-  #refresh = () => {
+  /**
+   * Immediately dispose of this element's inner, and force it to be recreated.
+   */
+  [refreshSymbol]() {
     if (this.#inner !== null) {
       this.#cleanup();
       this.#cleanup = () => { };
@@ -143,7 +160,7 @@ class DisposableElement extends h {
     /** @type {(() => void)[]} */
     const cleanupTasks = [];
 
-    /** @type {(fn: () => void) => void} */
+    /** @type {types.CleanupType} */
     const cleanup = (fn) => void cleanupTasks.push(fn);
 
     try {
@@ -154,14 +171,14 @@ class DisposableElement extends h {
     }
 
     this.#cleanup = () => cleanupTasks.forEach((fn) => fn());
-  };
+  }
 
   connectedCallback() {
     super.connectedCallback();
 
     // If we had an inner, we're being moved somewhere, so don't refresh.
     if (this.#inner === null) {
-      this.#refresh();
+      this[refreshSymbol]();
     }
   }
 
@@ -170,7 +187,7 @@ class DisposableElement extends h {
 
     // Only delete if we're not being attached somewhere else.
     if (!this.isConnected) {
-      this.#refresh();
+      this[refreshSymbol]();
     }
   }
 
@@ -184,13 +201,12 @@ class DisposableElement extends h {
 
     // Only refresh if we've updated at least once.
     if (this.hasUpdated && this.#inner.shouldDispose(changedProperties)) {
-      this.#refresh();
+      this[refreshSymbol]();
       return true;
     }
 
     return this.#inner.shouldUpdate(changedProperties);
   }
-
 
   render() {
     const i = /** @type {DisposableInner} */ (this.#inner);
@@ -203,7 +219,7 @@ class DisposableElement extends h {
  * @template T
  * @param {typeof DisposableInner} ctor
  * @param {(T & {[name: string]: any})=} defaultProps
- * @return {({ new(): HTMLElement & T })}
+ * @return {{ new(): HTMLElement & T }}
  */
 function disposableElement(ctor, defaultProps) {
 
@@ -232,6 +248,7 @@ function disposableElement(ctor, defaultProps) {
       super(ctor, defaultProps ?? {});
     }
   });
+
   return /** @type {({ new(): HTMLElement & T })} */ (out);
 }
 
@@ -258,7 +275,10 @@ const onPretendSnapshot = (id, callback) => {
 
 
 class ChatInner extends DisposableInner {
-  static properties = { chat: { type: String }, _data: { type: String, state: true } };
+  static properties = {
+    chat: { type: String },
+    _data: { type: String, state: true },
+  };
 
   /**
    * @param {(arg: () => void) => void} cleanup
@@ -303,15 +323,28 @@ class ChatInner extends DisposableInner {
   }
 }
 
+/**
+ * @typedef {InstanceType<typeof ChatElement>}
+ */
 const ChatElement = disposableElement(ChatInner, { chat: '' });
 customElements.define('chat-view', ChatElement);
+
+
+class ChatElement2 extends DisposableElement {
+  constructor() {
+    super(ChatInner, { chat: '' });
+  }
+}
+customElements.define('chat-view2', ChatElement2);
 
 //import { TestDisposableElement } from './elements/test-disposable.js';
 
 
-// TODO: this works for instantiation, but casting from "HTMLElement?" is borked
 const chatView = new ChatElement();
 document.body.append(chatView);
+
+
+document.getElementById('view');
 
 const updateChatButton = /** @type {HTMLButtonElement} */ (document.getElementById('chatButton'));
 

@@ -18,6 +18,9 @@
     "type": "git",
     "url": "git+https://github.com/samthor/disposable-element.git"
   },
+  "scripts": {
+    "build": "rollup -c; cp demo/index.html docs/"
+  },
   "author": "Sam Thorogood <sam.thorogood@gmail.com>",
   "license": "Apache-2.0",
   "bugs": {
