@@ -1,4 +1,5 @@
 If you happen to be here, [see the post](https://whistlr.info/2021/disposable-web-components/).
+This is a hopefully interesting idea, but not fully polished yet.
 
 # Usage
 
